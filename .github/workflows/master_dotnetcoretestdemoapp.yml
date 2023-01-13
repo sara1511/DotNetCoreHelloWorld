@@ -26,16 +26,16 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ./myapp
 
       - name: Zip artifact to upload
-        run: zip -r ${{env.DOTNET_ROOT}}/myapp ${{env.DOTNET_ROOT}}/myapp.zip
+        run: zip -r ./myapp/ ./myapp.zip
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp.zip
+          path: ./myapp.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,4 +57,4 @@ jobs:
           app-name: 'DotNetCoreTestDemoApp'
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_APPSERVICE_PUBLISHPROFILE }}
-          package: ${{env.DOTNET_ROOT}}/myapp.zip
+          package: ./myapp.zip
