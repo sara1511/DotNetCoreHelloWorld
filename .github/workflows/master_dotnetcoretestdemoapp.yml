@@ -9,6 +9,20 @@ on:
       - master
   workflow_dispatch:
 
+# CONFIGURATION
+# For help, go to https://github.com/Azure/Actions
+#
+# 1. Set up the following secrets in your repository:
+#   AZURE_APPSERVICE_PUBLISHPROFILE
+#
+# 2. Change these variables for your configuration:
+env:
+  AZURE_WEBAPP_NAME: DotNetCoreTestDemoApp            # set this to your application's name
+  AZURE_WEBAPP_SLOT_NAME: Production # set this to your application's slot name
+  AZURE_WEBAPP_PACKAGE_PATH: './myapp'            # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '7.x'                            # set this to the node version to use
+  ZIP_PACKAGE_PATH: './myapp-release.zip'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,23 +33,23 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '7.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
           include-prerelease: true
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ./myapp
+        run: dotnet publish -c Release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: Zip artifact to upload
-        run: zip -r ./myapp/ ./myapp.zip
+        run: zip -r ${{ env.ZIP_PACKAGE_PATH }} ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ./myapp.zip
+          path: ${{ env.ZIP_PACKAGE_PATH }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -54,7 +68,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'DotNetCoreTestDemoApp'
-          slot-name: 'production'
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          slot-name: ${{ env.AZURE_WEBAPP_SLOT_NAME }}
           publish-profile: ${{ secrets.AZURE_APPSERVICE_PUBLISHPROFILE }}
-          package: ./myapp.zip
+          package: ${{ env.ZIP_PACKAGE_PATH }}
