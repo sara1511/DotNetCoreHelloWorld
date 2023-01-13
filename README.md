@@ -5,9 +5,11 @@ This sample demonstrates a tiny Hello World .NET Core app for [App Service Web A
 # Build your DotNetCore application
 
 `cd DotNetCoreHelloWorld`
+
 `dotnet publish -c Release - ./myapp`
 
 # Run DotNetCore application from the published build
 
 `cd ./myapp/`
+
 `dotnet dotnetcoresample.dll`
