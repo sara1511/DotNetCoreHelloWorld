@@ -20,7 +20,7 @@ env:
   AZURE_WEBAPP_NAME: DotNetCoreTestDemoApp            # set this to your application's name
   AZURE_WEBAPP_SLOT_NAME: Production # set this to your application's slot name
   AZURE_WEBAPP_PACKAGE_PATH: './myapp'            # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '7.x'                            # set this to the node version to use
+  DOTNET_VERSION: '6.x'                            # set this to the node version to use
   ZIP_PACKAGE_PATH: './myapp-release.zip'
 
 jobs:
